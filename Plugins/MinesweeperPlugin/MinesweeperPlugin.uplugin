@@ -4,7 +4,7 @@
 	"VersionName": "1.0",
 	"FriendlyName": "MinesweeperPlugin",
 	"Description": "Minesweeper Minigame in Editor",
-	"Category": "Other",
+	"Category": "Editor Minigames",
 	"CreatedBy": "Juan Marcelo Portillo",
 	"CreatedByURL": "",
 	"DocsURL": "",

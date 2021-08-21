@@ -21,6 +21,12 @@ public:
 
 	static FName GetStyleSetName();
 
+	//Gets the Button Icon for the Editor Toolbar
+	static FSlateIcon GetToolbarButtonSlateIcon();
+
+	//Gets the Tab Icon for the Minesweeper Tab
+	static FSlateIcon GetNomadTabSlateIcon();
+
 private:
 
 	static TSharedRef< class FSlateStyleSet > Create();

@@ -17,12 +17,13 @@ public:
 	virtual void ShutdownModule() override;
 	
 	/** This function will be bound to Command. */
-	void PluginButtonClicked();
-	
+	void OpenMinesweeperButtonClicked();
+
+	TSharedRef<class SDockTab> OnSpawnMinesweeperTab(const class FSpawnTabArgs& SpawnTabArgs);
+
 private:
 
 	void RegisterMenus();
-
 
 private:
 	TSharedPtr<class FUICommandList> PluginCommands;

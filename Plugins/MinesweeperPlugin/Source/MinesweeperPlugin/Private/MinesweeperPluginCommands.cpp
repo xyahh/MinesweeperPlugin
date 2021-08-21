@@ -6,7 +6,8 @@
 
 void FMinesweeperPluginCommands::RegisterCommands()
 {
-	UI_COMMAND(PluginAction, "MinesweeperPlugin", "Execute MinesweeperPlugin action", EUserInterfaceActionType::Button, FInputGesture());
+	UI_COMMAND(OpenMinesweeper, "Minesweeper", "Opens the Minesweeper Minigame in the Editor"
+		, EUserInterfaceActionType::Button, FInputGesture());
 }
 
 #undef LOCTEXT_NAMESPACE

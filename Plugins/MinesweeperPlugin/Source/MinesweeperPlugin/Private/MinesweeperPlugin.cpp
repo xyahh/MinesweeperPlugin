@@ -5,6 +5,7 @@
 #include "MinesweeperPluginCommands.h"
 #include "Misc/MessageDialog.h"
 #include "ToolMenus.h"
+#include "LevelEditor.h"
 
 static const FName MinesweeperPluginTabName("MinesweeperPlugin");
 
@@ -22,8 +23,8 @@ void FMinesweeperPluginModule::StartupModule()
 	PluginCommands = MakeShareable(new FUICommandList);
 
 	PluginCommands->MapAction(
-		FMinesweeperPluginCommands::Get().PluginAction,
-		FExecuteAction::CreateRaw(this, &FMinesweeperPluginModule::PluginButtonClicked),
+		FMinesweeperPluginCommands::Get().OpenMinesweeper,
+		FExecuteAction::CreateRaw(this, &FMinesweeperPluginModule::OpenMinesweeperButtonClicked),
 		FCanExecuteAction());
 
 	UToolMenus::RegisterStartupCallback(FSimpleMulticastDelegate::FDelegate::CreateRaw(this, &FMinesweeperPluginModule::RegisterMenus));
@@ -31,52 +32,45 @@ void FMinesweeperPluginModule::StartupModule()
 
 void FMinesweeperPluginModule::ShutdownModule()
 {
-	// This function may be called during shutdown to clean up your module.  For modules that support dynamic reloading,
-	// we call this function before unloading the module.
-
 	UToolMenus::UnRegisterStartupCallback(this);
-
+	
 	UToolMenus::UnregisterOwner(this);
 
 	FMinesweeperPluginStyle::Shutdown();
-
+	
 	FMinesweeperPluginCommands::Unregister();
+
+	FGlobalTabmanager::Get()->UnregisterNomadTabSpawner(MinesweeperPluginTabName);
+
 }
 
-void FMinesweeperPluginModule::PluginButtonClicked()
+void FMinesweeperPluginModule::OpenMinesweeperButtonClicked()
 {
-	// Put your "OnButtonClicked" stuff here
-	FText DialogText = FText::Format(
-							LOCTEXT("PluginButtonDialogText", "Add code to {0} in {1} to override this button's actions"),
-							FText::FromString(TEXT("FMinesweeperPluginModule::PluginButtonClicked()")),
-							FText::FromString(TEXT("MinesweeperPlugin.cpp"))
-					   );
-	FMessageDialog::Open(EAppMsgType::Ok, DialogText);
+	FGlobalTabmanager::Get()->TryInvokeTab(MinesweeperPluginTabName);
+}
+
+TSharedRef<class SDockTab> FMinesweeperPluginModule::OnSpawnMinesweeperTab(const class FSpawnTabArgs& SpawnTabArgs)
+{
+	return SNew(SDockTab);
 }
 
 void FMinesweeperPluginModule::RegisterMenus()
 {
-	// Owner will be used for cleanup in call to UToolMenus::UnregisterOwner
-	FToolMenuOwnerScoped OwnerScoped(this);
-
+	UToolMenu* const ToolbarMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar");
+	FToolMenuSection& Section = ToolbarMenu->FindOrAddSection("Settings");
 	{
-		UToolMenu* Menu = UToolMenus::Get()->ExtendMenu("LevelEditor.MainMenu.Window");
-		{
-			FToolMenuSection& Section = Menu->FindOrAddSection("WindowLayout");
-			Section.AddMenuEntryWithCommandList(FMinesweeperPluginCommands::Get().PluginAction, PluginCommands);
-		}
+		FToolMenuEntry& Entry = Section.AddEntry(FToolMenuEntry::InitToolBarButton(FMinesweeperPluginCommands::Get().OpenMinesweeper
+			, TAttribute<FText>()
+			, TAttribute<FText>()
+			, TAttribute<FSlateIcon>(FMinesweeperPluginStyle::GetToolbarButtonSlateIcon())));
+
+		Entry.SetCommandList(PluginCommands);
 	}
 
-	{
-		UToolMenu* ToolbarMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar");
-		{
-			FToolMenuSection& Section = ToolbarMenu->FindOrAddSection("Settings");
-			{
-				FToolMenuEntry& Entry = Section.AddEntry(FToolMenuEntry::InitToolBarButton(FMinesweeperPluginCommands::Get().PluginAction));
-				Entry.SetCommandList(PluginCommands);
-			}
-		}
-	}
+	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(MinesweeperPluginTabName, FOnSpawnTab::CreateRaw(this, &FMinesweeperPluginModule::OnSpawnMinesweeperTab))
+		.SetDisplayName(LOCTEXT("FMinesweeperTabTitle", "Minesweeper"))
+		.SetMenuType(ETabSpawnerMenuType::Hidden)
+		.SetIcon(FMinesweeperPluginStyle::GetNomadTabSlateIcon());
 }
 
 #undef LOCTEXT_NAMESPACE
