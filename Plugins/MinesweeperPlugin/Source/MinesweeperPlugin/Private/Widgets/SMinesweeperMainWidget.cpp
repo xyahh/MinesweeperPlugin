@@ -35,7 +35,7 @@ void SMinesweeperMainWidget::Construct(const FArguments& InArgs)
 					SNew(STextBlock)
 					.Text(LOCTEXT("MinesweeperMenuTitle", "MINESWEEPER"))
 					.Justification(ETextJustify::Center)	
-					.TextStyle(FMinesweeperPluginStyle::Get(), FMinesweeperPluginStyle::GetMenuTitleTextStyleName())
+					.TextStyle(FMinesweeperPluginStyle::Get(), TEXT("Minesweeper.Text.Title"))
 				]
 			]
 

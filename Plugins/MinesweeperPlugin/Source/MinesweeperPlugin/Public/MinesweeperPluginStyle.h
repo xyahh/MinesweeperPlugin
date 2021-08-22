@@ -21,21 +21,6 @@ public:
 
 	static FName GetStyleSetName();
 
-	//Gets the set name for the Default sized (40x) Minesweeper Icon (used for the Editor Toolbar)
-	static FName GetMinesweeperIconName();
-
-	//Gets the set name for the Small sized (20x) Minesweeper Icon (used for the icon in the Minesweeper Tab)
-	static FName GetMinesweeperIconSmallName();
-
-	//Gets the set name for the Title Style
-	static FName GetMenuTitleTextStyleName();
-
-	//Gets the set name for the Text Styles of Settings
-	static FName GetSettingsTextStyleName();
-
-	//Gets the set name for the Text Styles of Start Game (Button Text)
-	static FName GetStartGameTextStyleName();
-
 private:
 
 	static TSharedRef< class FSlateStyleSet > Create();

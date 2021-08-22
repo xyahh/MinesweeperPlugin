@@ -68,7 +68,7 @@ void FMinesweeperPluginModule::RegisterMenus()
 			, TAttribute<FText>()
 			, TAttribute<FText>()
 			//Get custom style Minesweeper Icon
-			, FSlateIcon(FMinesweeperPluginStyle::GetStyleSetName(), FMinesweeperPluginStyle::GetMinesweeperIconName())));
+			, FSlateIcon(FMinesweeperPluginStyle::GetStyleSetName(), TEXT("Minesweeper.Icon"))));
 
 		Entry.SetCommandList(PluginCommands);
 	}
@@ -77,7 +77,7 @@ void FMinesweeperPluginModule::RegisterMenus()
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(MinesweeperPluginTabName, FOnSpawnTab::CreateRaw(this, &FMinesweeperPluginModule::OnSpawnMinesweeperTab))
 		.SetDisplayName(LOCTEXT("MinesweeperTabTitle", "Minesweeper"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden)
-		.SetIcon(FSlateIcon(FMinesweeperPluginStyle::GetStyleSetName(), FMinesweeperPluginStyle::GetMinesweeperIconSmallName()));
+		.SetIcon(FSlateIcon(FMinesweeperPluginStyle::GetStyleSetName(), TEXT("Minesweeper.Icon.Small")));
 }
 
 #undef LOCTEXT_NAMESPACE

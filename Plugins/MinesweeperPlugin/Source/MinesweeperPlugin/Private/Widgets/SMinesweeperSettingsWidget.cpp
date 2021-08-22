@@ -11,16 +11,16 @@
 #define MINESWEEPER_MINECOUNT
 #define MINESWEEPER_STARTGAME
 
-const int32 MinGridSize(1);
-const int32 MaxGridSize(50);
+const int32 MinGridSize(2);
+const int32 MaxGridSize(100);
 
-const int32 MinMineCount(0);
-const int32 MaxMineCount(50);
+const int32 MinMineCount(1);
+const int32 MaxMineCount(100);
 
 void SMinesweeperSettingsWidget::Construct(const FArguments& InArgs)
 {
-	GridWidth = 10;
-	GridHeight = 10;
+	GridWidth = 15;
+	GridHeight = 15;
 	MineCount = 25;
 
 	//Map the Slate Event delegates to the delegates we are going to use
@@ -56,7 +56,7 @@ void SMinesweeperSettingsWidget::Construct(const FArguments& InArgs)
 					SNew(STextBlock)
 					.Text(LOCTEXT("SMinesweeperSettingsWidgetGridWidth", "Grid Width: "))
 					.Justification(ETextJustify::Right)
-					.TextStyle(FMinesweeperPluginStyle::Get(), FMinesweeperPluginStyle::GetSettingsTextStyleName())
+					.TextStyle(FMinesweeperPluginStyle::Get(), TEXT("Minesweeper.Text.Settings"))
 				]
 
 				//Width Settings Editable Text Box
@@ -69,7 +69,7 @@ void SMinesweeperSettingsWidget::Construct(const FArguments& InArgs)
 					SAssignNew(GridWidthTextBox, SEditableTextBox)
 					.Text(FText::AsNumber(GridWidth))
 					.Justification(ETextJustify::Left)
-					.Font(FMinesweeperPluginStyle::Get().GetFontStyle(FMinesweeperPluginStyle::GetSettingsTextStyleName()))
+					.Font(FMinesweeperPluginStyle::Get().GetFontStyle(TEXT("Minesweeper.Text.Settings")))
 					.OnTextCommitted(this, &SMinesweeperSettingsWidget::OnGridWidthTextCommitted)
 				]
 
@@ -94,7 +94,7 @@ void SMinesweeperSettingsWidget::Construct(const FArguments& InArgs)
 					SNew(STextBlock)
 					.Text(LOCTEXT("SMinesweeperSettingsWidgetGridHeight", "Grid Height: "))
 					.Justification(ETextJustify::Right)
-					.TextStyle(FMinesweeperPluginStyle::Get(), FMinesweeperPluginStyle::GetSettingsTextStyleName())
+					.TextStyle(FMinesweeperPluginStyle::Get(), TEXT("Minesweeper.Text.Settings"))
 				]
 
 				//Height Settings Editable Text Box
@@ -107,7 +107,7 @@ void SMinesweeperSettingsWidget::Construct(const FArguments& InArgs)
 					SAssignNew(GridHeightTextBox, SEditableTextBox)
 					.Text(FText::AsNumber(GridHeight))
 					.Justification(ETextJustify::Left)
-					.Font(FMinesweeperPluginStyle::Get().GetFontStyle(FMinesweeperPluginStyle::GetSettingsTextStyleName()))
+					.Font(FMinesweeperPluginStyle::Get().GetFontStyle(TEXT("Minesweeper.Text.Settings")))
 					.OnTextCommitted(this, &SMinesweeperSettingsWidget::OnGridHeightTextCommitted)
 				]
 
@@ -132,7 +132,7 @@ void SMinesweeperSettingsWidget::Construct(const FArguments& InArgs)
 					SNew(STextBlock)
 					.Text(LOCTEXT("SMinesweeperSettingsWidgetMineCount", "Mine Count: "))
 					.Justification(ETextJustify::Right)
-					.TextStyle(FMinesweeperPluginStyle::Get(), FMinesweeperPluginStyle::GetSettingsTextStyleName())
+					.TextStyle(FMinesweeperPluginStyle::Get(), TEXT("Minesweeper.Text.Settings"))
 				]
 
 				//Mine Count Settings Editable Text Box
@@ -145,7 +145,7 @@ void SMinesweeperSettingsWidget::Construct(const FArguments& InArgs)
 					SAssignNew(MineCountTextBox, SEditableTextBox)
 					.Text(FText::AsNumber(MineCount))
 					.Justification(ETextJustify::Left)
-					.Font(FMinesweeperPluginStyle::Get().GetFontStyle(FMinesweeperPluginStyle::GetSettingsTextStyleName()))
+					.Font(FMinesweeperPluginStyle::Get().GetFontStyle(TEXT("Minesweeper.Text.Settings")))
 					.OnTextCommitted(this, &SMinesweeperSettingsWidget::OnMineCountTextCommitted)
 				]
 
@@ -166,7 +166,7 @@ void SMinesweeperSettingsWidget::Construct(const FArguments& InArgs)
 					.Text(LOCTEXT("SMinesweeperSettingsWidgetStartGame", "START GAME"))
 					.VAlign(EVerticalAlignment::VAlign_Center)
 					.HAlign(EHorizontalAlignment::HAlign_Center)
-					.TextStyle(FMinesweeperPluginStyle::Get(), FMinesweeperPluginStyle::GetStartGameTextStyleName())
+					.TextStyle(FMinesweeperPluginStyle::Get(), TEXT("Minesweeper.Text.StartGame"))
 					.DesiredSizeScale(FVector2D(2.f))
 					.OnClicked(this, &SMinesweeperSettingsWidget::OnStartGameButtonClicked)
 				]

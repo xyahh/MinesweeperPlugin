@@ -30,31 +30,6 @@ FName FMinesweeperPluginStyle::GetStyleSetName()
 	return TEXT("MinesweeperPluginStyle");
 }
 
-FName FMinesweeperPluginStyle::GetMinesweeperIconName()
-{
-	return TEXT("Minesweeper.Icon");
-}
-
-FName FMinesweeperPluginStyle::GetMinesweeperIconSmallName()
-{
-	return TEXT("Minesweeper.Icon.Small");
-}
-
-FName FMinesweeperPluginStyle::GetMenuTitleTextStyleName()
-{
-	return TEXT("Minesweeper.Text.Title");
-}
-
-FName FMinesweeperPluginStyle::GetSettingsTextStyleName()
-{
-	return TEXT("Minesweeper.Text.Settings");
-}
-
-FName FMinesweeperPluginStyle::GetStartGameTextStyleName()
-{
-	return TEXT("Minesweeper.Text.StartGame");
-}
-
 #define IMAGE_BRUSH( RelativePath, ... ) FSlateImageBrush( Style->RootToContentDir( RelativePath, TEXT(".png") ), __VA_ARGS__ )
 #define BOX_BRUSH( RelativePath, ... ) FSlateBoxBrush( Style->RootToContentDir( RelativePath, TEXT(".png") ), __VA_ARGS__ )
 #define BORDER_BRUSH( RelativePath, ... ) FSlateBorderBrush( Style->RootToContentDir( RelativePath, TEXT(".png") ), __VA_ARGS__ )
@@ -70,6 +45,10 @@ TSharedRef< FSlateStyleSet > FMinesweeperPluginStyle::Create()
 	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("MinesweeperPluginStyle"));
 	Style->SetContentRoot(IPluginManager::Get().FindPlugin("MinesweeperPlugin")->GetBaseDir() / TEXT("Resources"));
 	
+	//Brush Styles
+	Style->Set("Minesweeper.WhiteBrush", new FSlateColorBrush(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
+	Style->Set("Minesweeper.BlackBrush", new FSlateColorBrush(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f)));
+
 	//Icon Styles
 	Style->Set("Minesweeper.Icon", new IMAGE_BRUSH(TEXT("Icon40"), Icon40x40));
 	Style->Set("Minesweeper.Icon.Small", new IMAGE_BRUSH(TEXT("Icon40"), Icon20x20));

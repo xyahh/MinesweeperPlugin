@@ -22,7 +22,7 @@ public:
 
 	void OnGameStart(int32 GridWidth, int32 GridHeight, int32 MineCount);
 
-private:
+protected:
 
 	TSharedPtr<class SMinesweeperSettingsWidget> SettingsWidget;
 	TSharedPtr<class SMinesweeperGameWidget> GameWidget;

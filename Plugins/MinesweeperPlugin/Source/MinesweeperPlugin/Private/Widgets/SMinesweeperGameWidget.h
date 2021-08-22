@@ -22,6 +22,14 @@ public:
 
 	void NotifyOnGameStart(int32 GridWidth, int32 GridHeight, int32 MineCount);
 
-private:
+	virtual FReply OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 
+	FMargin GetGridOffset() const;
+
+protected:
+
+	TSharedPtr<class SConstraintCanvas> GameCanvas;
+	TSharedPtr<SGridPanel> GridPanel;
+
+	FVector2D GridOffset;
 };
