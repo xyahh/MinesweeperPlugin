@@ -5,7 +5,7 @@
 #include "MinesweeperPluginCommands.h"
 #include "Misc/MessageDialog.h"
 #include "ToolMenus.h"
-#include "LevelEditor.h"
+#include "Widgets/SMinesweeperMainWidget.h"
 
 static const FName MinesweeperPluginTabName("MinesweeperPlugin");
 
@@ -51,26 +51,33 @@ void FMinesweeperPluginModule::OpenMinesweeperButtonClicked()
 
 TSharedRef<class SDockTab> FMinesweeperPluginModule::OnSpawnMinesweeperTab(const class FSpawnTabArgs& SpawnTabArgs)
 {
-	return SNew(SDockTab);
+	return SNew(SDockTab)
+		.TabRole(ETabRole::NomadTab)
+		[
+			SAssignNew(MinesweeperWindow, SMinesweeperMainWidget)
+		];
 }
 
 void FMinesweeperPluginModule::RegisterMenus()
 {
-	UToolMenu* const ToolbarMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar");
-	FToolMenuSection& Section = ToolbarMenu->FindOrAddSection("Settings");
+	//Add the Minesweeper Button to the Editor Toolbar
 	{
+		UToolMenu* const ToolbarMenu = UToolMenus::Get()->ExtendMenu("LevelEditor.LevelEditorToolBar");
+		FToolMenuSection& Section = ToolbarMenu->FindOrAddSection("Settings");
 		FToolMenuEntry& Entry = Section.AddEntry(FToolMenuEntry::InitToolBarButton(FMinesweeperPluginCommands::Get().OpenMinesweeper
 			, TAttribute<FText>()
 			, TAttribute<FText>()
-			, TAttribute<FSlateIcon>(FMinesweeperPluginStyle::GetToolbarButtonSlateIcon())));
+			//Get custom style Minesweeper Icon
+			, FSlateIcon(FMinesweeperPluginStyle::GetStyleSetName(), FMinesweeperPluginStyle::GetMinesweeperIconName())));
 
 		Entry.SetCommandList(PluginCommands);
 	}
 
+	//Register the Minesweeper Tab spawner
 	FGlobalTabmanager::Get()->RegisterNomadTabSpawner(MinesweeperPluginTabName, FOnSpawnTab::CreateRaw(this, &FMinesweeperPluginModule::OnSpawnMinesweeperTab))
-		.SetDisplayName(LOCTEXT("FMinesweeperTabTitle", "Minesweeper"))
+		.SetDisplayName(LOCTEXT("MinesweeperTabTitle", "Minesweeper"))
 		.SetMenuType(ETabSpawnerMenuType::Hidden)
-		.SetIcon(FMinesweeperPluginStyle::GetNomadTabSlateIcon());
+		.SetIcon(FSlateIcon(FMinesweeperPluginStyle::GetStyleSetName(), FMinesweeperPluginStyle::GetMinesweeperIconSmallName()));
 }
 
 #undef LOCTEXT_NAMESPACE

@@ -26,5 +26,7 @@ private:
 	void RegisterMenus();
 
 private:
+
+	TSharedPtr<class SMinesweeperMainWidget> MinesweeperWindow;
 	TSharedPtr<class FUICommandList> PluginCommands;
 };

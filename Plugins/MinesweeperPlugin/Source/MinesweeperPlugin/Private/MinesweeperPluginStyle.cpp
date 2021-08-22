@@ -27,20 +27,32 @@ void FMinesweeperPluginStyle::Shutdown()
 
 FName FMinesweeperPluginStyle::GetStyleSetName()
 {
-	static FName StyleSetName(TEXT("MinesweeperPluginStyle"));
-	return StyleSetName;
+	return TEXT("MinesweeperPluginStyle");
 }
 
-FSlateIcon FMinesweeperPluginStyle::GetToolbarButtonSlateIcon()
+FName FMinesweeperPluginStyle::GetMinesweeperIconName()
 {
-	return FSlateIcon(FMinesweeperPluginStyle::GetStyleSetName()
-		, FName(TEXT("Minesweeper.Icon")));
+	return TEXT("Minesweeper.Icon");
 }
 
-FSlateIcon FMinesweeperPluginStyle::GetNomadTabSlateIcon()
+FName FMinesweeperPluginStyle::GetMinesweeperIconSmallName()
 {
-	return FSlateIcon(FMinesweeperPluginStyle::GetStyleSetName()
-		, FName(TEXT("Minesweeper.Icon.Small")));
+	return TEXT("Minesweeper.Icon.Small");
+}
+
+FName FMinesweeperPluginStyle::GetMenuTitleTextStyleName()
+{
+	return TEXT("Minesweeper.Text.Title");
+}
+
+FName FMinesweeperPluginStyle::GetSettingsTextStyleName()
+{
+	return TEXT("Minesweeper.Text.Settings");
+}
+
+FName FMinesweeperPluginStyle::GetStartGameTextStyleName()
+{
+	return TEXT("Minesweeper.Text.StartGame");
 }
 
 #define IMAGE_BRUSH( RelativePath, ... ) FSlateImageBrush( Style->RootToContentDir( RelativePath, TEXT(".png") ), __VA_ARGS__ )
@@ -52,13 +64,33 @@ FSlateIcon FMinesweeperPluginStyle::GetNomadTabSlateIcon()
 const FVector2D Icon20x20(20.f, 20.f);
 const FVector2D Icon40x40(40.f, 40.f);
 
+
 TSharedRef< FSlateStyleSet > FMinesweeperPluginStyle::Create()
 {
 	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("MinesweeperPluginStyle"));
 	Style->SetContentRoot(IPluginManager::Get().FindPlugin("MinesweeperPlugin")->GetBaseDir() / TEXT("Resources"));
 	
+	//Icon Styles
 	Style->Set("Minesweeper.Icon", new IMAGE_BRUSH(TEXT("Icon40"), Icon40x40));
 	Style->Set("Minesweeper.Icon.Small", new IMAGE_BRUSH(TEXT("Icon40"), Icon20x20));
+
+	const FTextBlockStyle DefaultTextStyle = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText");
+
+	//Text Styles
+	Style->Set("Minesweeper.Text.Title", FTextBlockStyle(DefaultTextStyle)
+		.SetFontSize(24)
+		.SetColorAndOpacity(FLinearColor::Yellow)
+		.SetHighlightColor(FLinearColor::Yellow));
+
+	Style->Set("Minesweeper.Text.Settings", FTextBlockStyle(DefaultTextStyle)
+		.SetFontSize(12)
+		.SetColorAndOpacity(FLinearColor::White)
+		.SetHighlightColor(FLinearColor::White));
+
+	Style->Set("Minesweeper.Text.StartGame", FTextBlockStyle(DefaultTextStyle)
+		.SetFontSize(16)
+		.SetColorAndOpacity(FLinearColor::Black)
+		.SetHighlightColor(FLinearColor::Black));
 
 	return Style;
 }
