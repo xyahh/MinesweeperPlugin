@@ -11,11 +11,11 @@
 #define MINESWEEPER_MINECOUNT
 #define MINESWEEPER_STARTGAME
 
-const int32 MinGridSize(2);
-const int32 MaxGridSize(100);
-
-const int32 MinMineCount(1);
-const int32 MaxMineCount(100);
+//Values gotten from https://www.reddit.com/r/ask/comments/1tdksu/whats_the_biggest_grid_size_you_can_make_in/
+const int32 MinGridSize(9);
+const int32 MaxGridSize(30);
+const int32 MinMineCount(10);
+const int32 MaxMineCount(668);
 
 void SMinesweeperSettingsWidget::Construct(const FArguments& InArgs)
 {
