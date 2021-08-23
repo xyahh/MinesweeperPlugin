@@ -1,4 +1,6 @@
-// Copyright Epic Games, Inc. All Rights Reserved.
+// Copyright 2021 Juan Marcelo Portillo. All Rights Reserved.
+
+#pragma once
 
 #include "CoreMinimal.h"
 #include "MinesweeperPluginStructs.h"
