@@ -7,3 +7,4 @@
 
 DECLARE_DELEGATE_RetVal_TwoParams(FReply, FOnTileButtonClicked, const FGeometry&, const FPointerEvent&)
 DECLARE_DELEGATE_RetVal_ThreeParams(FReply, FOnIndexedTileButtonClicked, const FGeometry&, const FPointerEvent&, int32)
+DECLARE_DELEGATE_OneParam(FOnGameFinished, bool bGameWon);

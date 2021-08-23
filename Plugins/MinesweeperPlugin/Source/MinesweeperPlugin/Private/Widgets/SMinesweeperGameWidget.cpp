@@ -23,7 +23,11 @@ void SMinesweeperGameWidget::Construct(const FArguments& InArgs)
 			.AutoSize(true)
 			.Offset(TAttribute<FMargin>(this, &SMinesweeperGameWidget::GetGridOffsetMargin))
 			[
-				SAssignNew(GridPanel, SGridPanel)
+				SNew(SBorder)
+				.BorderBackgroundColor(FLinearColor::White)
+				[
+					SAssignNew(GridPanel, SGridPanel)
+				]
 			]
 		]
 	];
@@ -36,6 +40,21 @@ void SMinesweeperGameWidget::NotifyOnGameStart(int32 GridWidth, int32 GridHeight
 		//Reset the Grid Offset so we always start at the Center
 		GridOffset = FVector2D::ZeroVector;
 		MinesweeperGameManager = MakeUnique<FMinesweeperGameManager>(GridWidth, GridHeight, MineCount, GridPanel);
+		MinesweeperGameManager->GetOnGameFinishedDelegate().BindLambda([](bool bGameWon)
+		{
+			const FText DialogTitle = FText::FromString(TEXT("Game Finished"));
+			if(bGameWon)
+			{
+				FMessageDialog::Open(EAppMsgType::Ok
+					, FText(LOCTEXT("SMinesweeperGameWidgetWinMessage", "Congratulations! You Won!"))
+					, &DialogTitle);
+			} else
+			{
+				FMessageDialog::Open(EAppMsgType::Ok
+					, FText(LOCTEXT("SMinesweeperGameWidgetWinMessage", "You opened a Mine! You lost!"))
+					, &DialogTitle);
+			}
+		});
 	}
 }
 

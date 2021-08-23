@@ -15,6 +15,8 @@ FMinesweeperGameManager::FMinesweeperGameManager(int32 InGridWidth, int32 InGrid
 	}
 
 	const int32 TotalTiles = InGridWidth * InGridHeight;
+	
+	BrokenEmptyTiles = 0;
 
 	//Early memory allocation to avoid having to allocate multiple times while adding
 	Tiles.Reserve(TotalTiles);
@@ -101,6 +103,42 @@ void FMinesweeperGameManager::IncreaseNeighborsNeighboringMineCount(int32 TileIn
 	}
 }
 
+void FMinesweeperGameManager::AutoBreakNeighborTiles(int32 X, int32 Y)
+{
+	for (int32 DeltaY = -1; DeltaY <= 1; ++DeltaY)
+	{
+		for (int32 DeltaX = -1; DeltaX <= 1; ++DeltaX)
+		{
+			//Ignore the case where DeltaX and Delta Y are both 0 (i.e. break self)
+			if (DeltaX != 0 || DeltaY != 0)
+			{
+				if(FMinesweeperTileInfo* const BrokenTile = AutoBreakTile(X + DeltaX, Y + DeltaY))
+				{
+					//Continue breaking if the tile we just broke has no neighboring mines
+					if (BrokenTile->NeighboringMineCount == 0)
+						AutoBreakNeighborTiles(X + DeltaX, Y + DeltaY);
+				}	
+			}
+		}
+	}
+}
+
+FMinesweeperTileInfo* FMinesweeperGameManager::AutoBreakTile(int32 X, int32 Y)
+{
+	if (FMinesweeperTileInfo* const Tile = GetTile(X, Y))
+	{
+		if (Tile->State == EMinesweeperTileState::Default)
+		{
+			//Only auto break if we are sure that the Contents are no Mine
+			//Auto break cannot make the user lose!
+			if (Tile->Content != EMinesweeperTileContent::Mine)
+				UpdateTileState(EMinesweeperTileState::Broken, *Tile);
+			return Tile;
+		}
+	}
+	return nullptr;
+}
+
 FMinesweeperTileInfo* FMinesweeperGameManager::GetTile(int32 X, int32 Y)
 {
 	if(FMath::IsWithin(X, 0, GridWidth) && FMath::IsWithin(Y, 0, GridHeight))
@@ -149,6 +187,15 @@ FReply FMinesweeperGameManager::OnTileClicked(const FGeometry& TileGeometry, con
 			if (EffectingButton == EKeys::LeftMouseButton)
 			{
 				UpdateTileState(EMinesweeperTileState::Broken, Tiles[TileIndex]);
+				int32 X, Y;
+
+				//Proceed with breaking Neighbor tiles only if what we are breaking right now isn't a mine
+				if(Tiles[TileIndex].Content != EMinesweeperTileContent::Mine 
+					&& GetCoordsFromIndex(TileIndex, X, Y)
+					&& Tiles[TileIndex].NeighboringMineCount == 0)
+				{
+					AutoBreakNeighborTiles(X, Y);
+				}
 				return FReply::Handled();
 			}
 		} 
@@ -164,7 +211,37 @@ FReply FMinesweeperGameManager::OnTileClicked(const FGeometry& TileGeometry, con
 
 void FMinesweeperGameManager::UpdateTileState(EMinesweeperTileState NewState, FMinesweeperTileInfo& Tile)
 {
-	Tile.State = NewState;
-	if (Tile.Widget.IsValid())
-		Tile.Widget->UpdateTile(Tile);
+	if(Tile.State != NewState)
+	{
+		Tile.State = NewState;
+
+		if (Tile.Widget.IsValid())
+			Tile.Widget->UpdateTile(Tile);
+
+		if(NewState == EMinesweeperTileState::Broken)
+		{
+			switch(Tile.Content)
+			{
+			case EMinesweeperTileContent::Nothing:
+				++BrokenEmptyTiles;
+				//Increase Number of Broken Tiles that contain Nothing by 1
+				//Win if the remaining number of tiles that are *NOT* BrokenEmptyTile is equal (or less than) than total mines
+				if (((GridHeight * GridWidth) - BrokenEmptyTiles) <= TotalMineCount)
+				{
+					ProcessGameFinish(true);
+				}
+			break;
+			
+			//Immediately lose if we broke a mine. Decrease Unbroken Mines by 1
+			case EMinesweeperTileContent::Mine:
+				ProcessGameFinish(false);
+			break;
+			}
+		}
+	}
+}
+
+void FMinesweeperGameManager::ProcessGameFinish(bool bGameWon)
+{
+	OnGameFinished.ExecuteIfBound(bGameWon);
 }
