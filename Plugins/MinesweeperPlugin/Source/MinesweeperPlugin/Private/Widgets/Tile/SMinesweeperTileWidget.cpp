@@ -9,13 +9,8 @@
 
 void SMinesweeperTileWidget::Construct(const FArguments& InArgs)
 {
-	TileState = EMinesweeperTileState::Default;
 	const FVector2D TileSize = FMinesweeperPluginStyle::GetMinesweeperTileSize();
 	
-	//TODO: Test
-	NeighboringMineCount = FMath::Rand() % 8; 
-	TileContent = (FMath::Rand() % 2 == 1) ? EMinesweeperTileContent::Nothing : EMinesweeperTileContent::Mine;
-
 	ChildSlot
 	[
 		//Fixed Sized Box to avoid scaling issues when changing the state of the tiles
@@ -53,78 +48,82 @@ void SMinesweeperTileWidget::Construct(const FArguments& InArgs)
 			]
 		]
 	];
-
-	UpdateTile();
 }
 
-void SMinesweeperTileWidget::UpdateTile()
+void SMinesweeperTileWidget::UpdateTile(const FMinesweeperTileInfo& TileInfo)
+{
+	UpdateActiveWidget(TileInfo);
+	UpdateImageBrush(TileInfo);
+	UpdateText(TileInfo);
+}
+
+FReply SMinesweeperTileWidget::OnTileButtonClicked(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
+{	
+	if(OnIndexedTileButtonClicked.IsBound())
+	{
+		OnIndexedTileButtonClicked.Execute(MyGeometry, MouseEvent, TileIndex);
+	}
+	return FReply::Handled();
+}
+
+void SMinesweeperTileWidget::UpdateActiveWidget(const FMinesweeperTileInfo& TileInfo)
 {
 	//Updates whether we need to show the Button, or the Text
 	if (WidgetSwitcher.IsValid())
 	{
-		WidgetSwitcher->SetActiveWidgetIndex(GetActiveWidgetIndex());
+		//Only show the Neighboring mines if we break the Tile and there was nothing
+		if (TileInfo.State == EMinesweeperTileState::Broken
+			&& TileInfo.Content == EMinesweeperTileContent::Nothing)
+		{
+			//Index 1 contains the Text Block that shows how many Neighboring mines there are
+			WidgetSwitcher->SetActiveWidgetIndex(1);
+		}
+		else
+		{
+			//Index 0 contains the button with an Image representing the Tile (Default, Flag, Mine) when the Tile is not broken
+			WidgetSwitcher->SetActiveWidgetIndex(0);
+		}
 	}
+}
 
-	if (NeighborMinesText.IsValid())
-	{
-		NeighborMinesText->SetText(FText::AsNumber(NeighboringMineCount));
-	}
-
+void SMinesweeperTileWidget::UpdateImageBrush(const FMinesweeperTileInfo& TileInfo)
+{
 	if (TileImage.IsValid())
 	{
-		TileImage->SetImage(GetTileImageBrush());
-	}
-}
-
-FReply SMinesweeperTileWidget::OnTileButtonClicked(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
-{
-	if (TileState == EMinesweeperTileState::Default)
-	{
-		const FKey EffectingButton = MouseEvent.GetEffectingButton();
-
-		if (EffectingButton == EKeys::RightMouseButton)
+		const auto GetTileImageBrush = [](const FMinesweeperTileInfo& TileInfo) -> const FSlateBrush*
 		{
-			TileState = EMinesweeperTileState::Flagged;
-			UpdateTile();
-			return FReply::Handled();
-		}
+			switch (TileInfo.State)
+			{
+			case EMinesweeperTileState::Flagged:
+				return FMinesweeperPluginStyle::Get().GetBrush(TEXT("Minesweeper.Tile.Flag"));
 
-		if (EffectingButton == EKeys::LeftMouseButton)
-		{
-			TileState = EMinesweeperTileState::Broken;
-			UpdateTile();
-			return FReply::Handled();
-		}
+			case EMinesweeperTileState::Broken:
+				switch (TileInfo.Content)
+				{
+				case EMinesweeperTileContent::Mine:
+					return FMinesweeperPluginStyle::Get().GetBrush(TEXT("Minesweeper.Tile.Mine"));
+				}
+				break;
+			}
+			return FMinesweeperPluginStyle::Get().GetBrush(TEXT("Minesweeper.Tile.Default"));
+		};
+
+		TileImage->SetImage(GetTileImageBrush(TileInfo));
 	}
-	return FReply::Unhandled();
 }
 
-int32 SMinesweeperTileWidget::GetActiveWidgetIndex() const
+void SMinesweeperTileWidget::UpdateText(const FMinesweeperTileInfo& TileInfo)
 {
-	if(TileState == EMinesweeperTileState::Broken && TileContent == EMinesweeperTileContent::Nothing)
+	if (NeighborMinesText.IsValid())
 	{
-		return 1; //Index 1 contains the Text Block that shows how many Neighboring mines there are
+		if (TileInfo.NeighboringMineCount > 0)
+			NeighborMinesText->SetText(FText::AsNumber(TileInfo.NeighboringMineCount));
+		else
+			NeighborMinesText->SetText(FText()); //Don't show any text if there are no neighboring mines
 	}
-	return 0; //Index 0 contains the button with an Image representing the Tile (Default, Flag, Mine) when the Tile is not broken
 }
 
-const FSlateBrush* SMinesweeperTileWidget::GetTileImageBrush() const
-{
-	switch(TileState)
-	{
-	case EMinesweeperTileState::Flagged:
-		return FMinesweeperPluginStyle::Get().GetBrush(TEXT("Minesweeper.Tile.Flag"));
 
-	case EMinesweeperTileState::Broken:
-		switch(TileContent)
-		{
-			case EMinesweeperTileContent::Mine:
-				return FMinesweeperPluginStyle::Get().GetBrush(TEXT("Minesweeper.Tile.Mine"));
-		}
-		break;
-	}
-	return FMinesweeperPluginStyle::Get().GetBrush(TEXT("Minesweeper.Tile.Default"));
-}
 
 #undef LOCTEXT_NAMESPACE
 

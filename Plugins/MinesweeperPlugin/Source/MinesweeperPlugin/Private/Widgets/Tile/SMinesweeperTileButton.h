@@ -2,8 +2,7 @@
 
 #pragma once
 #include "Widgets/Input/SButton.h"
-
-DECLARE_DELEGATE_RetVal_TwoParams(FReply, FOnTileButtonClicked, const FGeometry&, const FPointerEvent&)
+#include "MinesweeperPluginDelegates.h"
 
 /*
 * Tile Button that overrides the Mouse Behavior from SButton to support all types of Mouse Events \

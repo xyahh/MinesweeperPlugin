@@ -269,7 +269,23 @@ void SMinesweeperSettingsWidget::DisplayOutOfRangeErrorMessage(const FString& Se
 
 FReply SMinesweeperSettingsWidget::OnStartGameButtonClicked()
 {
-	OnGameStart.ExecuteIfBound(GridWidth, GridHeight, MineCount);
+	if(MineCount <= GridHeight * GridWidth)
+	{
+		OnGameStart.ExecuteIfBound(GridWidth, GridHeight, MineCount);
+	} 
+	else
+	{
+		const FText DialogTitle = FText::FromString(TEXT("Mine Overflow!"));
+
+		const FText DialogText = FText::Format(
+			LOCTEXT("SMinesweeperSettingsWidgetMineOverflowError"
+				, "There are more mines ({0}) than available Grid Tiles ({1})!")
+			, FText::AsNumber(MineCount)
+			, FText::AsNumber(GridWidth * GridHeight)
+		);
+
+		FMessageDialog::Open(EAppMsgType::Ok, DialogText, &DialogTitle);
+	}
 	return FReply::Handled();
 }
 

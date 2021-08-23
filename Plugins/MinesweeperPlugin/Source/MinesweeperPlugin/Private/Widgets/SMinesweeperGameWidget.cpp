@@ -33,21 +33,9 @@ void SMinesweeperGameWidget::NotifyOnGameStart(int32 GridWidth, int32 GridHeight
 {	
 	if(GridPanel.IsValid())
 	{
-		GridPanel->ClearChildren();
-
 		//Reset the Grid Offset so we always start at the Center
 		GridOffset = FVector2D::ZeroVector;
-
-		for (int32 y = 0; y < GridHeight; ++y)
-		{
-			for (int32 x = 0; x < GridWidth; ++x)
-			{
-				GridPanel->AddSlot(x, y)
-				[
-					SNew(SMinesweeperTileWidget)
-				];
-			}
-		}
+		MinesweeperGameManager = MakeUnique<FMinesweeperGameManager>(GridWidth, GridHeight, MineCount, GridPanel);
 	}
 }
 

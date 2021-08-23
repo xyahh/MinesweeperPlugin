@@ -5,7 +5,6 @@
 #include "SlateBasics.h"
 #include "SlateExtras.h"
 
-
 DECLARE_DELEGATE_ThreeParams(FOnGameStart, int32, int32, int32);
 
 class SMinesweeperSettingsWidget : public SCompoundWidget

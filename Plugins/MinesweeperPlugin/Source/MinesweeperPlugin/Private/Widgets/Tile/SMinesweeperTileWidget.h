@@ -4,7 +4,8 @@
 
 #include "SlateBasics.h"
 #include "SlateExtras.h"
-#include "MinesweeperPluginEnums.h"
+#include "MinesweeperPluginStructs.h"
+#include "MinesweeperPluginDelegates.h"
 
 class SMinesweeperTileWidget : public SCompoundWidget
 {
@@ -21,19 +22,28 @@ public:
 	virtual bool SupportsKeyboardFocus() const override { return true; }
 	//~ End SWidget Interface
 
-	void UpdateTile();
+	void SetTileIndex(int32 InTileIndex) { TileIndex = InTileIndex; }
+
+	FOnIndexedTileButtonClicked& GetOnIndexedTileButtonClickedDelegate() { return OnIndexedTileButtonClicked; }
+
+	void UpdateTile(const FMinesweeperTileInfo& TileInfo);
 
 	FReply OnTileButtonClicked(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
-	int32 GetActiveWidgetIndex() const;
-	const FSlateBrush* GetTileImageBrush() const;
 
-public:
+protected:
+
+	void UpdateActiveWidget(const FMinesweeperTileInfo& TileInfo);
+	void UpdateImageBrush(const FMinesweeperTileInfo& TileInfo);
+	void UpdateText(const FMinesweeperTileInfo& TileInfo);
+
+protected:
 
 	TSharedPtr<SWidgetSwitcher> WidgetSwitcher;
 	TSharedPtr<SImage> TileImage;
 	TSharedPtr<STextBlock> NeighborMinesText;
 
-	int32 NeighboringMineCount;
-	EMinesweeperTileContent TileContent;
-	EMinesweeperTileState TileState;
+	int32 TileIndex;
+
+	FOnIndexedTileButtonClicked OnIndexedTileButtonClicked;
+
 };

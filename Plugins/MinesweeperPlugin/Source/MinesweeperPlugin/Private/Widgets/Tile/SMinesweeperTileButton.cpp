@@ -59,6 +59,8 @@ FReply SMinesweeperTileButton::OnMouseButtonDown(const FGeometry& MyGeometry, co
 
 FReply SMinesweeperTileButton::OnMouseButtonUp(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent)
 {
+	//The logic here is the same as SButton::OnMouseButtonUp, except
+	//instead of hard coding it to LeftMouseButton, we check for the Mouse Keys found in 'RelevantMouseKeys'
 	FReply Reply = FReply::Unhandled();
 	const EButtonClickMethod::Type InputClickMethod = GetClickMethodFromInputType(MouseEvent);
 	const bool bMustBePressed = InputClickMethod == EButtonClickMethod::DownAndUp || InputClickMethod == EButtonClickMethod::PreciseClick;

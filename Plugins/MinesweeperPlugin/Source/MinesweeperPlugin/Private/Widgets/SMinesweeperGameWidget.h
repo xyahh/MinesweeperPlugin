@@ -4,6 +4,7 @@
 
 #include "SlateBasics.h"
 #include "SlateExtras.h"
+#include "Gameplay/MinesweeperGameManager.h"
 
 class SMinesweeperGameWidget : public SCompoundWidget
 {
@@ -29,6 +30,7 @@ public:
 
 protected:
 
+	TUniquePtr<FMinesweeperGameManager> MinesweeperGameManager;
 	TSharedPtr<class SConstraintCanvas> GameCanvas;
 	TSharedPtr<SGridPanel> GridPanel;
 
