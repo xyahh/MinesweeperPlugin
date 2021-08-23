@@ -39,19 +39,28 @@ FName FMinesweeperPluginStyle::GetStyleSetName()
 const FVector2D Icon20x20(20.f, 20.f);
 const FVector2D Icon40x40(40.f, 40.f);
 
+FVector2D FMinesweeperPluginStyle::GetMinesweeperTileSize()
+{
+	return Icon40x40;
+}
 
 TSharedRef< FSlateStyleSet > FMinesweeperPluginStyle::Create()
 {
 	TSharedRef< FSlateStyleSet > Style = MakeShareable(new FSlateStyleSet("MinesweeperPluginStyle"));
 	Style->SetContentRoot(IPluginManager::Get().FindPlugin("MinesweeperPlugin")->GetBaseDir() / TEXT("Resources"));
 	
-	//Brush Styles
+	//Color Brush Styles
 	Style->Set("Minesweeper.WhiteBrush", new FSlateColorBrush(FLinearColor(1.0f, 1.0f, 1.0f, 1.0f)));
 	Style->Set("Minesweeper.BlackBrush", new FSlateColorBrush(FLinearColor(0.0f, 0.0f, 0.0f, 1.0f)));
 
-	//Icon Styles
+	//Image Brush Styles
 	Style->Set("Minesweeper.Icon", new IMAGE_BRUSH(TEXT("Icon40"), Icon40x40));
 	Style->Set("Minesweeper.Icon.Small", new IMAGE_BRUSH(TEXT("Icon40"), Icon20x20));
+
+	//Image Brush Styles (for Tiles)
+	Style->Set("Minesweeper.Tile.Default", new IMAGE_BRUSH(TEXT(""), GetMinesweeperTileSize(), FLinearColor::Transparent));
+	Style->Set("Minesweeper.Tile.Flag", new IMAGE_BRUSH(TEXT("Flag40"), GetMinesweeperTileSize()));
+	Style->Set("Minesweeper.Tile.Mine", new IMAGE_BRUSH(TEXT("Icon40"), GetMinesweeperTileSize()));
 
 	const FTextBlockStyle DefaultTextStyle = FCoreStyle::Get().GetWidgetStyle<FTextBlockStyle>("NormalText");
 

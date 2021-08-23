@@ -21,6 +21,8 @@ public:
 
 	static FName GetStyleSetName();
 
+	static FVector2D GetMinesweeperTileSize();
+
 private:
 
 	static TSharedRef< class FSlateStyleSet > Create();

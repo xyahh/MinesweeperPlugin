@@ -1,6 +1,7 @@
 // Copyright 2021 Juan Marcelo Portillo. All Rights Reserved.
 
 #include "SMinesweeperGameWidget.h"
+#include "Tile/SMinesweeperTileWidget.h"
 #include "MinesweeperPluginStyle.h"
 #include "Widgets/Layout/SConstraintCanvas.h"
 
@@ -20,7 +21,7 @@ void SMinesweeperGameWidget::Construct(const FArguments& InArgs)
 			.Alignment(FVector2D(0.5f))
 			.Anchors(FAnchors(0.5f))
 			.AutoSize(true)
-			.Offset(TAttribute<FMargin>(this, &SMinesweeperGameWidget::GetGridOffset))
+			.Offset(TAttribute<FMargin>(this, &SMinesweeperGameWidget::GetGridOffsetMargin))
 			[
 				SAssignNew(GridPanel, SGridPanel)
 			]
@@ -33,6 +34,7 @@ void SMinesweeperGameWidget::NotifyOnGameStart(int32 GridWidth, int32 GridHeight
 	if(GridPanel.IsValid())
 	{
 		GridPanel->ClearChildren();
+
 		//Reset the Grid Offset so we always start at the Center
 		GridOffset = FVector2D::ZeroVector;
 
@@ -42,7 +44,7 @@ void SMinesweeperGameWidget::NotifyOnGameStart(int32 GridWidth, int32 GridHeight
 			{
 				GridPanel->AddSlot(x, y)
 				[
-					SNew(SButton)
+					SNew(SMinesweeperTileWidget)
 				];
 			}
 		}
@@ -53,17 +55,38 @@ FReply SMinesweeperGameWidget::OnMouseMove(const FGeometry& MyGeometry, const FP
 {
 	if(MouseEvent.IsMouseButtonDown(EKeys::MiddleMouseButton))
 	{
-		//Move Grid when Middle Mouse Button is Down
-		GridOffset += MouseEvent.GetCursorDelta();
+		GridOffset = GetGridOffset() + MouseEvent.GetCursorDelta();
 		FReply::Handled();
 	}
 	return FReply::Unhandled();
 }
 
-FMargin SMinesweeperGameWidget::GetGridOffset() const
+FVector2D SMinesweeperGameWidget::GetGridOffset() const
 {
+	const FVector2D HalfGameCanvasSize = GameCanvas->GetCachedGeometry().GetDrawSize() * 0.5f;
+	const FVector2D HalfGridSize = GridPanel->GetCachedGeometry().GetDrawSize() * 0.5f;
+	const FVector2D TileSize = FMinesweeperPluginStyle::GetMinesweeperTileSize();
+
+	// Clamp the Grid Offset so that we can move a Corner of the Grid to the opposite Game Canvas corner
+	// (e.g. the Top Left corner of the Grid to the Bottom Right corner of the Game Canvas), 
+	// but always leave at least one Tile inside the Game Canvas (so as to not to lose track of the grid)
+
+	const float OffsetX = FMath::Clamp(GridOffset.X
+		, -HalfGameCanvasSize.X - HalfGridSize.X + TileSize.X
+		, +HalfGameCanvasSize.X + HalfGridSize.X - TileSize.X);
+
+	const float OffsetY = FMath::Clamp(GridOffset.Y
+		, -HalfGameCanvasSize.Y - HalfGridSize.Y + TileSize.Y
+		, +HalfGameCanvasSize.Y + HalfGridSize.Y - TileSize.Y);
+
+	return FVector2D(OffsetX, OffsetY);
+}
+
+FMargin SMinesweeperGameWidget::GetGridOffsetMargin() const
+{
+	const FVector2D Offset = GetGridOffset();
 	//return Grid Offset, the last two can be Zero since we have AutoSize on
-	return FMargin(GridOffset.X, GridOffset.Y, 0.f, 0.f);
+	return FMargin(Offset.X, Offset.Y, 0.f, 0.f);
 }
 
 #undef LOCTEXT_NAMESPACE

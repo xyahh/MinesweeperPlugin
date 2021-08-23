@@ -24,7 +24,8 @@ public:
 
 	virtual FReply OnMouseMove(const FGeometry& MyGeometry, const FPointerEvent& MouseEvent);
 
-	FMargin GetGridOffset() const;
+	FVector2D GetGridOffset() const;
+	FMargin GetGridOffsetMargin() const;
 
 protected:
 
